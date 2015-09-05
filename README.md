@@ -1,1 +1,1 @@
-# jenkins_groovy_script
+# jenkins groovy script
