@@ -5,7 +5,7 @@ if( p == null ) {
   return
 }
 def c = p.imPlugin.provider.currentConnection()
-if( p == null ) {
+if( c == null ) {
   println("IRC connection not found. please set to IRC configuration")
   return
 }
