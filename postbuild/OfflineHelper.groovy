@@ -1,6 +1,6 @@
 import hudson.slaves.OfflineCause
 
-static print(manager)
+static checkOfflineNodes(manager)
 {
   def jenkins = hudson.model.Hudson.instance
   def slaves = jenkins.slaves
@@ -19,18 +19,7 @@ static print(manager)
   }
 }
 
-static to_offline_caused_by_result(manager)
-{
-  if( manager.build.getResult().isWorseThan(hudson.model.Result.SUCCESS) ) {
-    def msg = "automated offline: ${manager.build.getProject().getDisplayName()}#${manager.build.number}"
-    def com = manager.build.getBuiltOn().toComputer()
-    if( com.isOnline() ) {
-      com.setTemporarilyOffline(true, new OfflineCause.ByCLI(msg))
-    }
-  }
-}
-
-static to_offline(manager, message)
+static toOffline(manager, message)
 {
   def com = manager.build.getBuiltOn().toComputer()
   if( com.isOnline() ) {
@@ -38,4 +27,19 @@ static to_offline(manager, message)
   }
 }
 
+static toOfflineCausedByResult(manager)
+{
+  if( manager.build.getResult().isWorseThan(hudson.model.Result.SUCCESS) ) {
+    def msg = "automated offline: ${manager.build.getProject().getDisplayName()}#${manager.build.number}"
+    toOffline(manager, msg)
+  }
+}
+
+static toOfflineCausedByFindText(manager, regexp)
+{
+  if( manager.logContains(regexp) ) {
+    def msg = "automated offline: ${manager.build.getProject().getDisplayName()}#${manager.build.number}"
+    toOffline(manager, msg)
+  }
+}
 
